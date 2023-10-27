@@ -17,6 +17,10 @@ var escapeRegexp = regexp.MustCompile(`^(.+?)://(.*?)@(.*?)/(.*?)$`)
 
 // Parse parses a RTSP URL.
 func Parse(s string) (*URL, error) {
+	return ParseRelative(s, nil)
+}
+
+func ParseRelative(s string, base *URL) (*URL, error) {
 	// https://github.com/golang/go/issues/30611
 	m := escapeRegexp.FindStringSubmatch(s)
 	if m != nil {
@@ -25,7 +29,15 @@ func Parse(s string) (*URL, error) {
 		s = m[1] + "://" + m[2] + "@" + m[3] + "/" + m[4]
 	}
 
-	u, err := url.Parse(s)
+	var u *url.URL
+	var err error
+
+	if (base != nil) {	
+ 		u, err = (*url.URL)(base).Parse(s)
+	} else {
+		u, err = url.Parse(s)
+	}
+
 	if err != nil {
 		return nil, err
 	}

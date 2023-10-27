@@ -76,7 +76,7 @@ func findBaseURL(sd *sdp.SessionDescription, res *base.Response, u *url.URL) (*u
 			return nil, fmt.Errorf("invalid Content-Base: '%v'", cb)
 		}
 
-		ret, err := url.Parse(cb[0])
+		ret, err := url.ParseRelative(cb[0], u)
 		if err != nil {
 			return nil, fmt.Errorf("invalid Content-Base: '%v'", cb)
 		}
